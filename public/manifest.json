@@ -1,0 +1,17 @@
+{
+  "name": "ChemBattle",
+  "short_name": "ChemBattle",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#0a0f14",
+  "theme_color": "#00ff88",
+  "description": "Duelo 1v1 de balanceo de ecuaciones químicas en tiempo real.",
+    "icons": [
+    {
+      "src": "icon.png",
+      "sizes": "1024x1024",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

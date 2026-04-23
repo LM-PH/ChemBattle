@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChemBattle | 1v1 Chemistry Duel</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css?v=3">
+    <link rel="manifest" href="manifest.json">
+    <link rel="shortcut icon" href="icon.png" type="image/png">
+    <meta name="theme-color" content="#0a0f14">
+</head>
+<body>
+    <div id="app">
+        <!-- AUTH SCREENS -->
+        <section id="auth-screen" class="screen active">
+            <div id="login-form" class="glass-card auth-card">
+                <h2>INICIAR SESIÓN</h2>
+                <input type="email" id="login-email" placeholder="Correo electrónico">
+                <input type="password" id="login-pass" placeholder="Contraseña">
+                <button id="btn-login" class="btn-primary">ENTRAR</button>
+                <p>¿No tienes cuenta? <a href="#" id="go-to-register">Regístrate</a></p>
+            </div>
+
+            <div id="register-form" class="glass-card auth-card" style="display:none;">
+                <h2>REGISTRO CIENTÍFICO</h2>
+                <input type="text" id="reg-name" placeholder="Nombre completo">
+                <input type="text" id="reg-nickname" placeholder="Nickname (Ej: Curie99)">
+                <div class="row">
+                    <input type="text" id="reg-grade" placeholder="Grado">
+                    <input type="text" id="reg-group" placeholder="Grupo">
+                </div>
+                <input type="email" id="reg-email" placeholder="Correo electrónico">
+                <input type="password" id="reg-pass" placeholder="Contraseña">
+                <button id="btn-register-submit" class="btn-primary">CREAR CUENTA</button>
+                <p>¿Ya tienes cuenta? <a href="#" id="go-to-login">Inicia sesión</a></p>
+            </div>
+        </section>
+
+        <!-- Landing Screen -->
+        <section id="landing-screen" class="screen">
+            <div id="user-stats" class="user-stats-bar">
+                <span id="user-coins">🪙 --</span>
+                <button id="btn-logout" style="background:none; border:none; color:var(--error-red); cursor:pointer; font-size:0.8rem; margin-left:10px;">SALIR</button>
+            </div>
+            <div class="hero-content">
+                <div class="logo-container">
+                    <h1 class="glitch" data-content="ChemBattle">ChemBattle</h1>
+                    <p class="subtitle">Duelo de Balanceo Químico</p>
+                </div>
+                
+                <div class="login-box">
+                    <input type="text" id="player-name" placeholder="Tu Nombre de Combate" maxlength="15">
+                    <div class="landing-buttons">
+                        <button id="btn-play" class="btn-primary">
+                            <span class="btn-text">JUGAR 1 VS 1 (ONLINE)</span>
+                            <span class="btn-glow"></span>
+                        </button>
+                        <button id="btn-practice" class="btn-secondary">PRACTICAR (VS IA)</button>
+                        <button id="btn-ranking" class="btn-secondary">HALL OF FAME (RANKING)</button>
+                        <button id="btn-show-store" class="btn-secondary">LABORATORIO (TIENDA)</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Ranking Screen -->
+        <section id="ranking-screen" class="screen">
+            <div class="glass-card ranking-card">
+                <h2>HALL OF FAME</h2>
+                
+                <div class="ranking-filters">
+                    <select id="rank-sort">
+                        <option value="wins">Por Victorias</option>
+                        <option value="coins">Por Monedas</option>
+                    </select>
+                    <input type="text" id="rank-filter-grade" placeholder="Grado">
+                    <input type="text" id="rank-filter-group" placeholder="Grupo">
+                    <button id="btn-apply-rank" class="btn-action">FILTRAR</button>
+                </div>
+
+                <div class="ranking-table-container">
+                    <table id="ranking-table">
+                        <thead>
+                            <tr>
+                                <th>POS</th>
+                                <th>NICKNAME</th>
+                                <th>PUNTOS</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ranking-body">
+                            <!-- JS Injection -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <button id="btn-back-rank" class="btn-secondary">VOLVER</button>
+            </div>
+        </section>
+
+        <!-- Store Screen -->
+        <section id="store-screen" class="screen">
+            <div class="result-card store-card">
+                <h2>TIENDA DE PODERES</h2>
+                <div class="store-coins">🪙 <span id="store-coins">0</span></div>
+                <div class="store-items">
+                    <div class="store-item">
+                        <div class="item-icon">❄️</div>
+                        <div class="item-name">Congelar (5s)</div>
+                        <button id="buy-freeze" class="btn-buy">50 🪙</button>
+                        <div id="inventory-freeze" class="inventory-count">Tienes: 0</div>
+                    </div>
+                    <div class="store-item">
+                        <div class="item-icon">🌀</div>
+                        <div class="item-name">Confundir Rival</div>
+                        <button id="buy-confuse" class="btn-buy">50 🪙</button>
+                        <div id="inventory-confuse" class="inventory-count">Tienes: 0</div>
+                    </div>
+                </div>
+                <button id="btn-back-store" class="btn-secondary">VOLVER</button>
+            </div>
+        </section>
+
+        <!-- Matchmaking Screen -->
+        <section id="matchmaking-screen" class="screen">
+            <div id="room-selector" class="glass-card" style="padding:40px; text-align:center; max-width:450px;">
+                <div class="radar" id="radar-anim" style="display:none; margin:0 auto 30px auto;">
+                    <div class="radar-line"></div>
+                </div>
+                <h2>CAMPO DE BATALLA</h2>
+                
+                <div id="room-controls" style="display:flex; flex-direction:column; gap:15px; margin-top:30px;">
+                    <button id="btn-quick-play" class="btn-primary" style="background:var(--neon-green); border-color:var(--neon-green);">PARTIDA RÁPIDA</button>
+                    <div style="display:flex; align-items:center; gap:10px; margin:5px 0;">
+                        <hr style="flex:1; opacity:0.2;"> <span style="font-size:0.8rem; opacity:0.5;">O USA UN CÓDIGO</span> <hr style="flex:1; opacity:0.2;">
+                    </div>
+                    <button id="btn-create-room" class="btn-secondary">CREAR SALA PRIVADA</button>
+                    <div style="display:flex; gap:10px;">
+                        <input type="text" id="join-code-input" placeholder="CÓDIGO" style="flex:1; padding:12px; border-radius:8px; background:rgba(255,255,255,0.05); border:1px solid var(--neon-blue); color:white; text-align:center; text-transform:uppercase;">
+                        <button id="btn-join-room" class="btn-primary" style="padding:0 15px; font-size:0.8rem;">ENTRAR</button>
+                    </div>
+                </div>
+
+                <div id="waiting-area" style="display:none; margin-top:30px;">
+                    <p>CÓDIGO DE TU SALA:</p>
+                    <h1 id="my-room-code" style="color:var(--neon-green); font-size:3rem; margin:10px 0;">---</h1>
+                    <p id="matchmaking-status">Esperando oponente...</p>
+                </div>
+
+                <button id="btn-cancel-match" class="btn-secondary" style="margin-top:30px;">ATRÁS</button>
+            </div>
+        </section>
+
+        <!-- Game Screen -->
+        <section id="game-screen" class="screen">
+            <div class="game-header">
+                <div class="player-info player-me">
+                    <span class="name">Tú</span>
+                    <div class="status-dot online"></div>
+                </div>
+                <div class="timer-container">
+                    <div class="timer-ring">
+                        <svg><circle cx="30" cy="30" r="28"></circle></svg>
+                        <span id="timer-text">60</span>
+                    </div>
+                </div>
+                <div class="player-info player-rival">
+                    <span id="rival-name">Oponente</span>
+                    <div class="status-dot"></div>
+                </div>
+            </div>
+
+            <div class="arena">
+                <div class="equation-box">
+                    <div id="equation-display" class="equation-display">
+                        <!-- Example: <span>2</span>H₂ + O₂ → <span>2</span>H₂O -->
+                    </div>
+                </div>
+
+                <div class="controls-panel">
+                    <div id="coefficient-inputs" class="coefficient-inputs">
+                        <!-- Inputs will be generated here -->
+                    </div>
+                    <button id="btn-submit" class="btn-action">ENVIAR FÓRMULA</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Result Screen -->
+        <section id="result-screen" class="screen">
+            <div class="result-card">
+                <h1 id="result-title">¡VICTORIA!</h1>
+                <div class="result-stats">
+                    <div class="stat">
+                        <span class="label">Tu tiempo</span>
+                        <span id="result-my-time" class="value">00:45</span>
+                    </div>
+                    <div class="stat">
+                        <span class="label">Rival</span>
+                        <span id="result-rival-time" class="value">00:52</span>
+                    </div>
+                </div>
+                <button id="btn-restart" class="btn-primary">NUEVA PARTIDA</button>
+            </div>
+        </section>
+    </div>
+
+    <!-- Lógica de Juego y Base de Datos (MERN + Socket.IO) -->
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="client-auth.js"></script>
+    <script src="client-rooms.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
