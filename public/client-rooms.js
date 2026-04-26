@@ -85,7 +85,7 @@ socket.on('opponent_disconnected', () => {
     });
 });
 
-document.getElementById('btn-quick-play').onclick = () => Rooms.startMatchmaking();
+
 document.getElementById('btn-create-room').onclick = () => Rooms.createRoom();
 document.getElementById('btn-join-room').onclick = () => Rooms.joinRoom();
 document.getElementById('btn-cancel-match').onclick = () => showScreen('landing');
