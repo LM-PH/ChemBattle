@@ -168,6 +168,7 @@ const showScreen = (id) => {
 // --- USER DATA SYSTEM ---
 let userData = {
     coins: 0,
+    wins: 0,
     powers: { freeze: 0, confuse: 0 }
 };
 
@@ -425,14 +426,26 @@ function showResults(data) {
     document.getElementById('result-my-time').innerText = "Tiempo: " + data.time + "s";
     
     // --- SISTEMA DE RECOMPENSAS ---
+    const rewardEl = document.createElement('div');
+    rewardEl.id = "result-reward";
+    rewardEl.style.marginTop = "15px";
+    rewardEl.style.fontSize = "1.2rem";
+    rewardEl.style.fontWeight = "bold";
+
     if (isWinner) {
-        console.log("💰 ¡Ganaste! +10 monedas");
         userData.coins += 10;
         userData.wins = (userData.wins || 0) + 1;
+        rewardEl.innerHTML = `<span style="color:var(--neon-green)">+10 🪙</span> | <span style="color:var(--neon-blue)">+1 PUNTO 🏆</span>`;
     } else {
-        console.log("💸 Perdiste. -3 monedas");
         userData.coins = Math.max(0, userData.coins - 3);
+        rewardEl.innerHTML = `<span style="color:var(--error-red)">-3 🪙</span> | <span style="color:white">0 PUNTOS</span>`;
     }
+    
+    // Insertar recompensa en la pantalla si no existe
+    const statsContainer = document.querySelector('.result-stats');
+    const oldReward = document.getElementById('result-reward');
+    if (oldReward) oldReward.remove();
+    statsContainer.after(rewardEl);
     
     updateUIStats();
     
