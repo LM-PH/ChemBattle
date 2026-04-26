@@ -1,4 +1,4 @@
-const Auth = {
+window.Auth = {
     checkSession() {
         const storedUser = localStorage.getItem('_cb_user');
         if (storedUser) {
@@ -44,6 +44,7 @@ const Auth = {
     },
 
     async login(email, password) {
+        console.log("🚀 Intentando login para:", email);
         try {
             const res = await fetch('/api/login', {
                 method: 'POST',
@@ -55,10 +56,12 @@ const Auth = {
                 localStorage.setItem('_cb_user', JSON.stringify(json.user));
                 window.location.reload();
             } else {
+                console.error("❌ Fallo en login:", json.error);
                 alert("Error en login: " + json.error);
             }
         } catch (e) {
-            alert("Error en login: " + e.message);
+            console.error("💥 Error crítico en login:", e);
+            alert("Error crítico: " + e.message + "\nRevisa la consola (F12) para más detalles.");
         }
     },
 
@@ -67,6 +70,8 @@ const Auth = {
         window.location.reload();
     }
 };
+
+const Auth = window.Auth; // Referencia local para compatibilidad
 
 // Toggle forms
 document.getElementById('go-to-register').onclick = () => {

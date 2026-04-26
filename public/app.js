@@ -193,9 +193,13 @@ window.setPlayerFromAuth = (player) => {
 };
 
 async function initUser() {
+    console.log("🎮 Iniciando motor del juego...");
     // Intentar recuperar sesión del usuario si existe
     if (window.Auth && typeof window.Auth.checkSession === 'function') {
+        console.log("🔐 Verificando sesión activa...");
         window.Auth.checkSession();
+    } else {
+        console.warn("⚠️ Módulo de autenticación no detectado aún.");
     }
 }
 
