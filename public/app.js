@@ -1,4 +1,11 @@
 // --- CONFIGURATION ---
+function getLevel(wins) {
+    if (wins >= 200) return { name: "Gran Alquimista", emoji: "🧙", color: "#ff00ff" };
+    if (wins >= 150) return { name: "Maestro de Síntesis", emoji: "🧫", color: "#ff8800" };
+    if (wins >= 100) return { name: "Analista Químico", emoji: "🔬", color: "#00d2ff" };
+    if (wins >= 50) return { name: "Técnico en Reacciones", emoji: "⚗️", color: "#00ff88" };
+    return { name: "Ayudante de Laboratorio", emoji: "🥼", color: "#ffffff" };
+}
 // Firebase backend removido, se utiliza Appwrite en appwrite-auth.js y appwrite-rooms.js
 
 const EQUATIONS_BANK = [
@@ -454,9 +461,32 @@ function showResults(data) {
     rewardEl.style.fontWeight = "bold";
 
     if (isWinner) {
+        const oldLevel = getLevel(userData.wins);
         userData.coins += 10;
         userData.wins = (userData.wins || 0) + 1;
+        const newLevel = getLevel(userData.wins);
+
         rewardEl.innerHTML = `<span style="color:var(--neon-green)">+10 🪙</span> | <span style="color:var(--neon-blue)">+1 PUNTO 🏆</span>`;
+
+        // SI SUBIÓ DE NIVEL
+        if (newLevel.name !== oldLevel.name) {
+            const levelUpMsg = document.createElement('div');
+            levelUpMsg.className = 'level-up-anim';
+            levelUpMsg.style = `
+                background: linear-gradient(45deg, #000, #222);
+                border: 2px solid ${newLevel.color};
+                padding: 15px;
+                margin-top: 20px;
+                border-radius: 10px;
+                animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+                box-shadow: 0 0 30px ${newLevel.color}44;
+            `;
+            levelUpMsg.innerHTML = `
+                <h2 style="color:${newLevel.color}; margin:0; font-size:1.1rem;">🧪 ¡ASCENSO CIENTÍFICO!</h2>
+                <p style="margin:5px 0 0; font-size:0.9rem;">Ahora eres: <b>${newLevel.emoji} ${newLevel.name}</b></p>
+            `;
+            statsContainer.after(levelUpMsg);
+        }
     } else {
         userData.coins = Math.max(0, userData.coins - 3);
         rewardEl.innerHTML = `<span style="color:var(--error-red)">-3 🪙</span> | <span style="color:white">0 PUNTOS</span>`;
