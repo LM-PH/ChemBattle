@@ -104,7 +104,8 @@ app.get('/api/ranking', async (req, res) => {
 // --- SOCKET.IO (JUEGO MULTIJUGADOR) ---
 let matchmakingQueue = [];
 let activeMatches = {};
-let privateRooms = {}; // Almacena salas esperando oponente por código
+let privateRooms = {}; 
+let publicRooms = {}; // Almacena las salas públicas para el listado
 
 io.on('connection', (socket) => {
     console.log('🔗 Cliente conectado:', socket.id);
