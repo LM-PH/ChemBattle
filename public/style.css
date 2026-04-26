@@ -42,9 +42,10 @@ body {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 20px;
+    padding: 40px 20px;
     background: radial-gradient(circle at center, rgba(10, 15, 20, 0.4) 0%, rgba(10, 15, 20, 0.9) 100%);
     backdrop-filter: blur(4px);
+    overflow-y: auto;
     transition: opacity 0.5s ease;
 }
 
@@ -337,10 +338,12 @@ sub {
 
 /* Cleanup and responsive fixes */
 @media (max-width: 600px) {
-    h1.glitch { font-size: 2.5rem; }
+    h1.glitch { font-size: 2.2rem; }
     .equation-display { font-size: 1.5rem; }
-    .game-header { padding: 10px; }
-    .coeff-input { width: 50px; height: 50px; font-size: 1.5rem; }
+    .game-header { padding: 10px; flex-direction: column; gap: 10px; }
+    .coeff-input { width: 45px; height: 45px; font-size: 1.2rem; }
+    .glass-card { padding: 20px !important; width: 95% !important; }
+    .btn-giant { height: 60px !important; font-size: 1.1rem !important; }
 }
 
 .user-stats-bar {
