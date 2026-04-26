@@ -174,6 +174,7 @@ io.on('connection', (socket) => {
         }
         
         socket.join(code);
+        socket.currentCreatedRoom = code; // Guardamos que este socket es el host de esta sala
         socket.emit('room_created', { code, isPublic });
     });
 
@@ -208,6 +209,8 @@ io.on('connection', (socket) => {
                 socket.join(matchId);
                 hostSocket.currentRoom = matchId;
                 socket.currentRoom = matchId;
+                
+                hostSocket.currentCreatedRoom = null; // Ya no está esperando, está jugando
 
                 io.to(matchId).emit('match_found', activeMatches[matchId]);
                 
@@ -236,9 +239,30 @@ io.on('connection', (socket) => {
         }
     });
 
+    // Salir de una sala (Cancelar espera)
+    socket.on('leave_room', () => {
+        if (socket.currentCreatedRoom) {
+            const code = socket.currentCreatedRoom;
+            console.log(`[Cleanup] Borrando sala ${code}`);
+            delete publicRooms[code];
+            delete privateRooms[code];
+            socket.leave(code);
+            socket.currentCreatedRoom = null;
+            io.emit('public_rooms_updated', Object.values(publicRooms));
+        }
+    });
+
     socket.on('disconnect', async () => {
         console.log('❌ Cliente desconectado:', socket.id);
         
+        // --- LIMPIEZA DE SALAS EN ESPERA ---
+        if (socket.currentCreatedRoom) {
+            const code = socket.currentCreatedRoom;
+            delete publicRooms[code];
+            delete privateRooms[code];
+            io.emit('public_rooms_updated', Object.values(publicRooms));
+        }
+
         // Quitar de cola si estaba
         matchmakingQueue = matchmakingQueue.filter(id => id !== socket.id);
         

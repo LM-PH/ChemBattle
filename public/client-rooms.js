@@ -132,7 +132,10 @@ document.querySelectorAll('.btn-back-mm').forEach(btn => {
     btn.onclick = () => Rooms.showStep('main-menu');
 });
 
-document.getElementById('btn-cancel-match').onclick = () => Rooms.openMenu();
+document.getElementById('btn-cancel-match').onclick = () => {
+    socket.emit('leave_room');
+    Rooms.openMenu();
+};
 document.getElementById('btn-back-to-landing').onclick = () => showScreen('landing');
 
 document.getElementById('btn-play').onclick = () => {
