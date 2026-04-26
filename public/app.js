@@ -193,7 +193,10 @@ window.setPlayerFromAuth = (player) => {
 };
 
 async function initUser() {
-    // Session is handled by Appwrite
+    // Intentar recuperar sesión del usuario si existe
+    if (window.Auth && typeof window.Auth.checkSession === 'function') {
+        window.Auth.checkSession();
+    }
 }
 
 initUser();

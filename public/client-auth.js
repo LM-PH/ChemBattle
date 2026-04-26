@@ -100,4 +100,4 @@ document.getElementById('btn-login').onclick = () => {
 
 document.getElementById('btn-logout').onclick = () => Auth.logout();
 
-Auth.checkSession();
+// Auth.checkSession(); removido para evitar colisión con app.js
