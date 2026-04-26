@@ -29,6 +29,7 @@ const userSchema = new mongoose.Schema({
     nickname: String,
     grade: String,
     group: String,
+    school: String,
     coins: { type: Number, default: 0 },
     wins: { type: Number, default: 0 },
     powers: {
@@ -41,9 +42,9 @@ const User = mongoose.model('User', userSchema);
 // --- ENDPOINTS REST ---
 app.post('/api/register', async (req, res) => {
     try {
-        const { email, password, name, nickname, grade, group } = req.body;
+        const { email, password, name, nickname, grade, group, school } = req.body;
         // NOTA: Para producción DEBES encriptar la contraseña (ej. bcrypt)
-        const newUser = new User({ email, password, name, nickname, grade, group });
+        const newUser = new User({ email, password, name, nickname, grade, group, school });
         await newUser.save();
         res.json({ success: true, message: "Usuario registrado con éxito", user: newUser });
     } catch (error) {

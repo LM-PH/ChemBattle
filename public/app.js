@@ -300,6 +300,7 @@ async function loadRanking() {
                         <span style="display:block; font-weight:bold;">${doc.nickname}</span>
                         <span style="font-size:0.65rem; color:${doc.levelColor || '#fff'}; opacity:0.8;">${doc.levelEmoji} ${doc.levelName}</span>
                     </td>
+                    <td style="font-size:0.8rem; opacity:0.8;">${doc.school || '---'}</td>
                     <td>${sortBy === 'wins' ? doc.wins + ' 🏆' : doc.coins + ' 🪙'}</td>
                 `;
                 body.appendChild(tr);

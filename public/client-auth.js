@@ -51,7 +51,8 @@ window.Auth = {
                     name: data.name,
                     nickname: data.nickname,
                     grade: data.grade,
-                    group: data.group
+                    group: data.group,
+                    school: data.school
                 })
             });
             const json = await res.json();
@@ -114,6 +115,7 @@ document.getElementById('btn-register-submit').onclick = () => {
         nickname: document.getElementById('reg-nickname').value,
         grade: document.getElementById('reg-grade').value,
         group: document.getElementById('reg-group').value,
+        school: document.getElementById('reg-school').value,
         email: document.getElementById('reg-email').value,
         pass: document.getElementById('reg-pass').value
     };
