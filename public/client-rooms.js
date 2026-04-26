@@ -66,6 +66,7 @@ socket.on('match_found', (matchData) => {
 
 // Listener cuando alguien gana la partida
 socket.on('match_finished', (resultData) => {
+    console.log("🏆 Partida finalizada. Ganador:", resultData.winnerNickname);
     if (window.showResults) {
         window.showResults({
             winner_id: resultData.winnerUserId,

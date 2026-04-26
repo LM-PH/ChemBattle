@@ -424,16 +424,15 @@ function showResults(data) {
     title.style.color = isWinner ? "var(--neon-green)" : "var(--error-red)";
     document.getElementById('result-my-time').innerText = "Tiempo: " + data.time + "s";
     
-    // --- SISTEMA DE MONEDAS Y WINS (APPWRITE) ---
-    const updateData = {};
+    // --- SISTEMA DE RECOMPENSAS ---
     if (isWinner) {
+        console.log("💰 ¡Ganaste! +10 monedas");
         userData.coins += 10;
         userData.wins = (userData.wins || 0) + 1;
-        updateData.wins = userData.wins;
     } else {
+        console.log("💸 Perdiste. -3 monedas");
         userData.coins = Math.max(0, userData.coins - 3);
     }
-    updateData.coins = userData.coins;
     
     updateUIStats();
     
