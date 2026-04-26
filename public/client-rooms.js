@@ -76,6 +76,18 @@ socket.on('match_finished', (resultData) => {
     }
 });
 
+socket.on('opponent_disconnected', (data) => {
+    if (window.showResults) {
+        window.showResults({
+            winner_id: myId, // Tú ganas
+            winner_name: playerName,
+            time: "Abandono",
+            isAbandonment: true,
+            customMessage: data.message
+        });
+    }
+});
+
 // Cuando el rival se desconecta
 socket.on('opponent_disconnected', () => {
     alert("Tu oponente se desconectó. Has ganado por abandono.");

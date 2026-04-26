@@ -1,8 +1,31 @@
 window.Auth = {
-    checkSession() {
+    async checkSession() {
         const storedUser = localStorage.getItem('_cb_user');
         if (storedUser) {
             const user = JSON.parse(storedUser);
+            // Re-verificar datos con el servidor para evitar que el usuario manipule sus monedas locales
+            try {
+                const res = await fetch(`/api/user/${user._id}`);
+                const data = await res.json();
+                if (data.success) {
+                    const freshUser = data.user;
+                    localStorage.setItem('_cb_user', JSON.stringify(freshUser));
+                    if (window.setPlayerFromAuth) {
+                        window.setPlayerFromAuth({
+                            userId: freshUser._id,
+                            nickname: freshUser.nickname,
+                            coins: freshUser.coins,
+                            wins: freshUser.wins,
+                            powers: freshUser.powers || { freeze: 0, confuse: 0 }
+                        });
+                    }
+                    return;
+                }
+            } catch (e) {
+                console.warn("No se pudo sincronizar con el servidor, usando cache local.");
+            }
+
+            // Fallback a local si el servidor falla
             if (window.setPlayerFromAuth) {
                 window.setPlayerFromAuth({
                     userId: user._id,

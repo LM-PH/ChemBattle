@@ -67,6 +67,19 @@ app.post('/api/login', async (req, res) => {
     }
 });
 
+app.get('/api/user/:userId', async (req, res) => {
+    try {
+        const user = await User.findById(req.params.userId);
+        if (user) {
+            res.json({ success: true, user });
+        } else {
+            res.status(404).json({ success: false, error: 'Usuario no encontrado' });
+        }
+    } catch (e) {
+        res.status(500).json({ success: false, error: e.message });
+    }
+});
+
 app.post('/api/user/save', async (req, res) => {
     try {
         const { userId, coins, wins, powers } = req.body;
@@ -200,14 +213,41 @@ io.on('connection', (socket) => {
         }
     });
 
-    socket.on('disconnect', () => {
+    socket.on('disconnect', async () => {
         console.log('❌ Cliente desconectado:', socket.id);
+        
         // Quitar de cola si estaba
         matchmakingQueue = matchmakingQueue.filter(id => id !== socket.id);
         
-        // Finalizar partida si estaba en una
+        // --- PENALIZACIÓN POR ABANDONO ---
         if (socket.currentRoom && activeMatches[socket.currentRoom]) {
-            socket.to(socket.currentRoom).emit('opponent_disconnected');
+            const match = activeMatches[socket.currentRoom];
+            const leaver = match.players.find(p => p.socketId === socket.id);
+            const winner = match.players.find(p => p.socketId !== socket.id);
+
+            if (leaver && winner) {
+                console.log(`⚠️ Abandono detectado: ${leaver.nickname} vs ${winner.nickname}`);
+                
+                try {
+                    // 1. Castigar al que se fue (-3 monedas)
+                    await User.findByIdAndUpdate(leaver.userId, { $inc: { coins: -3 } });
+                    // Asegurar que no sea negativo (aunque $inc lo permite, es mejor cuidarlo)
+                    const checks = await User.findById(leaver.userId);
+                    if (checks.coins < 0) await User.findByIdAndUpdate(leaver.userId, { coins: 0 });
+
+                    // 2. Premiar al que se quedó (+10 monedas, +1 victoria)
+                    await User.findByIdAndUpdate(winner.userId, { $inc: { coins: 10, wins: 1 } });
+
+                    // 3. Avisar al que se quedó
+                    io.to(winner.socketId).emit('opponent_disconnected', {
+                        message: "¡Victoria! Tu oponente ha huido del laboratorio.",
+                        rewardCoins: 10,
+                        rewardWins: 1
+                    });
+                } catch (err) {
+                    console.error("Error procesando penalización por abandono:", err);
+                }
+            }
             delete activeMatches[socket.currentRoom];
         }
     });
