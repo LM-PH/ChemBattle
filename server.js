@@ -151,14 +151,32 @@ io.on('connection', (socket) => {
     });
 
     // Crear sala (Pública o Privada)
-    socket.on('create_room', (data) => {
+    socket.on('create_room', async (data) => {
         const { playerData, isPublic, roomName } = data;
         const code = Math.random().toString(36).substring(2, 8).toUpperCase();
         
+        // Calcular Ranking del Host
+        let rank = "N/A";
+        try {
+            const hostData = await User.findById(playerData.userId);
+            if (hostData) {
+                // Contar cuántos usuarios tienen más victorias que el host
+                const betterPlayers = await User.countDocuments({ wins: { $gt: hostData.wins } });
+                rank = betterPlayers + 1;
+            }
+        } catch (err) {
+            console.error("Error calculando rank para sala:", err);
+        }
+
         const roomInfo = {
             code: code,
-            name: roomName || `Sala de ${playerData.nickname}`, // Usar nombre personalizado o default
-            host: { socketId: socket.id, nickname: playerData.nickname, userId: playerData.userId },
+            name: roomName || `Sala de ${playerData.nickname}`,
+            host: { 
+                socketId: socket.id, 
+                nickname: playerData.nickname, 
+                userId: playerData.userId,
+                rank: rank // Guardamos su posición en el ranking
+            },
             status: 'waiting',
             isPublic: isPublic,
             createdAt: Date.now()

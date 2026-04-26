@@ -62,13 +62,24 @@ socket.on('public_rooms_updated', (rooms) => {
     rooms.forEach(room => {
         const div = document.createElement('div');
         div.className = 'room-item';
-        div.style = 'display:flex; justify-content:space-between; align-items:center; padding:10px; border-bottom:1px solid rgba(255,255,255,0.1); background:rgba(255,255,255,0.05); margin-bottom:5px; border-radius:5px;';
+        div.style = 'display:flex; justify-content:space-between; align-items:center; padding:12px; border-bottom:1px solid rgba(255,255,255,0.1); background:rgba(255,255,255,0.05); margin-bottom:8px; border-radius:10px; border:1px solid rgba(255,255,255,0.05);';
+        
+        // Estilo para el ranking (Medalla si es Top 3)
+        let rankDisplay = `#${room.host.rank}`;
+        let rankStyle = 'color:rgba(255,255,255,0.5);';
+        if(room.host.rank === 1) { rankDisplay = '🥇 #1'; rankStyle = 'color:#ffd700; font-weight:bold;'; }
+        else if(room.host.rank === 2) { rankDisplay = '🥈 #2'; rankStyle = 'color:#c0c0c0; font-weight:bold;'; }
+        else if(room.host.rank === 3) { rankDisplay = '🥉 #3'; rankStyle = 'color:#cd7f32; font-weight:bold;'; }
+
         div.innerHTML = `
             <div style="text-align:left;">
-                <span style="display:block; font-size:0.85rem; color:var(--neon-blue); font-weight:bold; text-transform:uppercase;">${room.name}</span>
-                <span style="font-size:0.6rem; opacity:0.7;">Host: ${room.host.nickname}</span>
+                <span style="display:block; font-size:1rem; color:var(--neon-green); font-weight:bold; text-transform:uppercase; letter-spacing:1px;">${room.name}</span>
+                <div style="display:flex; align-items:center; gap:10px; margin-top:4px;">
+                    <span style="font-size:0.75rem; color:white; opacity:0.9;">Host: ${room.host.nickname}</span>
+                    <span style="font-size:0.7rem; ${rankStyle} background:rgba(0,0,0,0.3); padding:2px 8px; border-radius:20px;">${rankDisplay}</span>
+                </div>
             </div>
-            <button onclick="Rooms.join('${room.code}')" style="padding:5px 15px; font-size:0.7rem; background:var(--neon-green); color:black; border:none; border-radius:3px; cursor:pointer; font-weight:bold;">ENTRAR</button>
+            <button onclick="Rooms.join('${room.code}')" class="btn-primary" style="padding:8px 20px; font-size:0.8rem; border-radius:5px; transform:none;">UNIRSE</button>
         `;
         list.appendChild(div);
     });
