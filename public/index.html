@@ -149,10 +149,18 @@
                 <div id="mm-create-options" class="mm-step" style="display:none;">
                     <h3 style="margin-bottom:20px;">CONFIGURAR BATALLA</h3>
                     <div class="option-grid" style="display:grid; grid-template-columns:1fr 1fr; gap:15px;">
-                        <button id="btn-create-public" class="btn-action">SALA PÚBLICA<br><small style="font-size:0.6rem; opacity:0.7;">Visible para todos</small></button>
+                        <button id="btn-goto-name-public" class="btn-action">SALA PÚBLICA<br><small style="font-size:0.6rem; opacity:0.7;">Visible para todos</small></button>
                         <button id="btn-create-private" class="btn-action">SALA PRIVADA<br><small style="font-size:0.6rem; opacity:0.7;">Solo con código</small></button>
                     </div>
                     <button class="btn-back-mm btn-secondary" style="margin-top:20px; width:100%;">VOLVER</button>
+                </div>
+
+                <!-- Name Public Room -->
+                <div id="mm-name-public" class="mm-step" style="display:none;">
+                    <h3>NOMBRE DE LA BATALLA</h3>
+                    <input type="text" id="public-room-name-input" placeholder="Ej: Laboratorio del Terror" maxlength="20" style="margin-top:20px; width:100%; text-align:center;">
+                    <button id="btn-confirm-create-public" class="btn-primary" style="margin-top:20px; width:100%;">CREAR SALA PÚBLICA</button>
+                    <button class="btn-back-mm btn-secondary" style="margin-top:15px; width:100%;">VOLVER</button>
                 </div>
 
                 <!-- Join Private (Code) -->

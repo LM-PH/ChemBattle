@@ -1,7 +1,6 @@
 const socket = io();
 
 const Rooms = {
-    // Control de navegación interna en el Matchmaking
     showStep(stepId) {
         document.querySelectorAll('.mm-step').forEach(s => s.style.display = 'none');
         document.getElementById(`mm-${stepId}`).style.display = 'block';
@@ -12,14 +11,22 @@ const Rooms = {
         this.showStep('main-menu');
     },
 
+    // Inicia proceso para sala pública
+    preparePublic() {
+        this.showStep('name-public');
+    },
+
     create(isPublic) {
+        const roomName = isPublic ? document.getElementById('public-room-name-input').value.trim() : "";
+        
         document.getElementById('matchmaking-status').innerText = "Esperando al rival...";
         document.getElementById('wait-room-type').innerText = isPublic ? "BATALLA PÚBLICA" : "BATALLA PRIVADA";
         this.showStep('waiting-area');
         
         socket.emit('create_room', { 
             playerData: { userId: myId, nickname: playerName }, 
-            isPublic: isPublic 
+            isPublic: isPublic,
+            roomName: roomName
         });
     },
 
@@ -58,8 +65,8 @@ socket.on('public_rooms_updated', (rooms) => {
         div.style = 'display:flex; justify-content:space-between; align-items:center; padding:10px; border-bottom:1px solid rgba(255,255,255,0.1); background:rgba(255,255,255,0.05); margin-bottom:5px; border-radius:5px;';
         div.innerHTML = `
             <div style="text-align:left;">
-                <span style="display:block; font-size:0.8rem; color:var(--neon-blue); font-weight:bold;">${room.host.nickname}</span>
-                <span style="font-size:0.6rem; opacity:0.7;">Sala: ${room.code}</span>
+                <span style="display:block; font-size:0.85rem; color:var(--neon-blue); font-weight:bold; text-transform:uppercase;">${room.name}</span>
+                <span style="font-size:0.6rem; opacity:0.7;">Host: ${room.host.nickname}</span>
             </div>
             <button onclick="Rooms.join('${room.code}')" style="padding:5px 15px; font-size:0.7rem; background:var(--neon-green); color:black; border:none; border-radius:3px; cursor:pointer; font-weight:bold;">ENTRAR</button>
         `;
@@ -114,8 +121,10 @@ document.getElementById('btn-show-public-lobby').onclick = () => {
     Rooms.refreshLobby();
 };
 
-document.getElementById('btn-create-public').onclick = () => Rooms.create(true);
+document.getElementById('btn-goto-name-public').onclick = () => Rooms.preparePublic();
+document.getElementById('btn-confirm-create-public').onclick = () => Rooms.create(true);
 document.getElementById('btn-create-private').onclick = () => Rooms.create(false);
+
 document.getElementById('btn-join-room').onclick = () => Rooms.join(document.getElementById('join-code-input').value);
 document.getElementById('btn-refresh-lobby').onclick = () => Rooms.refreshLobby();
 

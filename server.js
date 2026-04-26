@@ -151,11 +151,12 @@ io.on('connection', (socket) => {
 
     // Crear sala (Pública o Privada)
     socket.on('create_room', (data) => {
-        const { playerData, isPublic } = data;
+        const { playerData, isPublic, roomName } = data;
         const code = Math.random().toString(36).substring(2, 8).toUpperCase();
         
         const roomInfo = {
             code: code,
+            name: roomName || `Sala de ${playerData.nickname}`, // Usar nombre personalizado o default
             host: { socketId: socket.id, nickname: playerData.nickname, userId: playerData.userId },
             status: 'waiting',
             isPublic: isPublic,
