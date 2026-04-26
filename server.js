@@ -91,6 +91,7 @@ app.get('/api/ranking', async (req, res) => {
 // --- SOCKET.IO (JUEGO MULTIJUGADOR) ---
 let matchmakingQueue = [];
 let activeMatches = {};
+let privateRooms = {}; // Almacena salas esperando oponente por código
 
 io.on('connection', (socket) => {
     console.log('🔗 Cliente conectado:', socket.id);
@@ -132,6 +133,55 @@ io.on('connection', (socket) => {
             // Entrar en cola
             socket.playerData = playerData; // Guardamos en el objeto temporalmente
             matchmakingQueue.push(socket.id);
+        }
+    });
+
+    // Crear sala privada con código
+    socket.on('create_private_room', (playerData) => {
+        const code = Math.random().toString(36).substring(2, 8).toUpperCase();
+        console.log(`[Private] Sala creada: ${code} por ${playerData.nickname}`);
+        
+        privateRooms[code] = {
+            host: { socketId: socket.id, nickname: playerData.nickname, userId: playerData.userId },
+            status: 'waiting'
+        };
+        
+        socket.join(code);
+        socket.emit('room_created', code);
+    });
+
+    // Unirse a sala privada por código
+    socket.on('join_private_room', (data) => {
+        const { roomCode, userId, nickname } = data;
+        const room = privateRooms[roomCode];
+
+        if (room && room.status === 'waiting') {
+            console.log(`[Private] ${nickname} se unió a la sala ${roomCode}`);
+            const host = room.host;
+            const matchId = "match_" + roomCode;
+
+            activeMatches[matchId] = {
+                players: [
+                    { socketId: host.socketId, nickname: host.nickname, userId: host.userId },
+                    { socketId: socket.id, nickname: nickname, userId: userId }
+                ],
+                status: 'playing',
+                equationIdx: Math.floor(Math.random() * 50), // Más variedad de ecuaciones
+                ready: 0
+            };
+
+            const hostSocket = io.sockets.sockets.get(host.socketId);
+            if (hostSocket) {
+                hostSocket.join(matchId);
+                socket.join(matchId);
+                hostSocket.currentRoom = matchId;
+                socket.currentRoom = matchId;
+
+                io.to(matchId).emit('match_found', activeMatches[matchId]);
+                delete privateRooms[roomCode];
+            }
+        } else {
+            socket.emit('error_message', "El código es inválido o la sala ya no existe.");
         }
     });
 
