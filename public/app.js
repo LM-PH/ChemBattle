@@ -143,7 +143,7 @@ const ChemParser = {
 // --- APP STATE ---
 
 let playerName = "";
-let myId = Math.random().toString(36).substring(7);
+let myId = null;
 let currentMatchId = null;
 let currentEq = null;
 let startTime = null;
@@ -219,8 +219,9 @@ function updateUIStats() {
 }
 
 async function saveUser() {
+    if (!myId || myId.length < 10) return; // No guardar si es ID temporal o no existe
     try {
-        await fetch('/api/user/save', {
+        const res = await fetch('/api/user/save', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -230,6 +231,16 @@ async function saveUser() {
                 powers: userData.powers
             })
         });
+        const json = await res.json();
+        if (json.success) {
+            // Actualizar el "recuerdo" local para que al refrescar no se pierda nada
+            const stored = JSON.parse(localStorage.getItem('_cb_user') || '{}');
+            stored.coins = userData.coins;
+            stored.wins = userData.wins;
+            stored.powers = userData.powers;
+            localStorage.setItem('_cb_user', JSON.stringify(stored));
+            console.log("✅ Progreso guardado en nube y local");
+        }
     } catch (e) {
         console.error("Error guardando usuario:", e);
     }
