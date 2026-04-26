@@ -149,27 +149,44 @@ io.on('connection', (socket) => {
         }
     });
 
-    // Crear sala privada con código
-    socket.on('create_private_room', (playerData) => {
+    // Crear sala (Pública o Privada)
+    socket.on('create_room', (data) => {
+        const { playerData, isPublic } = data;
         const code = Math.random().toString(36).substring(2, 8).toUpperCase();
-        console.log(`[Private] Sala creada: ${code} por ${playerData.nickname}`);
         
-        privateRooms[code] = {
+        const roomInfo = {
+            code: code,
             host: { socketId: socket.id, nickname: playerData.nickname, userId: playerData.userId },
-            status: 'waiting'
+            status: 'waiting',
+            isPublic: isPublic,
+            createdAt: Date.now()
         };
+
+        if (isPublic) {
+            publicRooms[code] = roomInfo;
+            console.log(`[Public] Sala creada: ${code} por ${playerData.nickname}`);
+            io.emit('public_rooms_updated', Object.values(publicRooms)); // Avisar a todos
+        } else {
+            privateRooms[code] = roomInfo;
+            console.log(`[Private] Sala creada: ${code} por ${playerData.nickname}`);
+        }
         
         socket.join(code);
-        socket.emit('room_created', code);
+        socket.emit('room_created', { code, isPublic });
     });
 
-    // Unirse a sala privada por código
-    socket.on('join_private_room', (data) => {
+    // Obtener lista de salas públicas
+    socket.on('get_public_rooms', () => {
+        socket.emit('public_rooms_updated', Object.values(publicRooms));
+    });
+
+    // Unirse a sala (por código o desde lista pública)
+    socket.on('join_room', (data) => {
         const { roomCode, userId, nickname } = data;
-        const room = privateRooms[roomCode];
+        let room = publicRooms[roomCode] || privateRooms[roomCode];
 
         if (room && room.status === 'waiting') {
-            console.log(`[Private] ${nickname} se unió a la sala ${roomCode}`);
+            console.log(`[Match] ${nickname} se unió a la sala ${roomCode}`);
             const host = room.host;
             const matchId = "match_" + roomCode;
 
@@ -179,7 +196,7 @@ io.on('connection', (socket) => {
                     { socketId: socket.id, nickname: nickname, userId: userId }
                 ],
                 status: 'playing',
-                equationIdx: Math.floor(Math.random() * 50), // Más variedad de ecuaciones
+                equationIdx: Math.floor(Math.random() * 50),
                 ready: 0
             };
 
@@ -191,10 +208,14 @@ io.on('connection', (socket) => {
                 socket.currentRoom = matchId;
 
                 io.to(matchId).emit('match_found', activeMatches[matchId]);
+                
+                // Limpiar de las listas de espera
+                delete publicRooms[roomCode];
                 delete privateRooms[roomCode];
+                io.emit('public_rooms_updated', Object.values(publicRooms)); // Actualizar lista para todos
             }
         } else {
-            socket.emit('error_message', "El código es inválido o la sala ya no existe.");
+            socket.emit('error_message', "La sala ya no existe o está llena.");
         }
     });
 

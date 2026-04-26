@@ -1,72 +1,86 @@
-const socket = io(); // Conecta al servidor de Socket.IO local
+const socket = io();
 
 const Rooms = {
-    // Solo muestra el menú de selección (Rápida, Crear, Unirse)
+    // Control de navegación interna en el Matchmaking
+    showStep(stepId) {
+        document.querySelectorAll('.mm-step').forEach(s => s.style.display = 'none');
+        document.getElementById(`mm-${stepId}`).style.display = 'block';
+    },
+
     openMenu() {
         showScreen('matchmaking');
-        document.getElementById('room-controls').style.display = 'flex';
-        document.getElementById('waiting-area').style.display = 'none';
-        document.getElementById('radar-anim').style.display = 'none';
+        this.showStep('main-menu');
     },
 
-    startMatchmaking() {
-        document.getElementById('matchmaking-status').innerText = "Buscando oponente...";
-        document.getElementById('room-controls').style.display = 'none';
-        document.getElementById('waiting-area').style.display = 'block';
-        document.getElementById('radar-anim').style.display = 'block';
-        document.getElementById('my-room-code').innerText = "---";
-
-        // Envía solicitud al servidor para buscar partida rápida
-        socket.emit('join_queue', { userId: myId, nickname: playerName });
-    },
-
-    createRoom() {
+    create(isPublic) {
         document.getElementById('matchmaking-status').innerText = "Esperando al rival...";
-        document.getElementById('room-controls').style.display = 'none';
-        document.getElementById('waiting-area').style.display = 'block';
-        document.getElementById('radar-anim').style.display = 'block';
+        document.getElementById('wait-room-type').innerText = isPublic ? "BATALLA PÚBLICA" : "BATALLA PRIVADA";
+        this.showStep('waiting-area');
         
-        socket.emit('create_private_room', { userId: myId, nickname: playerName });
+        socket.emit('create_room', { 
+            playerData: { userId: myId, nickname: playerName }, 
+            isPublic: isPublic 
+        });
     },
 
-    joinRoom() {
-        const code = document.getElementById('join-code-input').value.toUpperCase().trim();
+    join(code) {
         if (!code) return alert("Ingresa un código");
-        
-        socket.emit('join_private_room', { 
+        socket.emit('join_room', { 
             userId: myId, 
             nickname: playerName, 
-            roomCode: code 
+            roomCode: code.toUpperCase().trim() 
         });
+    },
+
+    refreshLobby() {
+        socket.emit('get_public_rooms');
     }
 };
-// Al crear sala privada, el servidor nos manda el código
-socket.on('room_created', (code) => {
-    document.getElementById('my-room-code').innerText = code;
+
+// --- LISTENERS DE SOCKET ---
+
+socket.on('room_created', (data) => {
+    document.getElementById('my-room-code').innerText = data.code;
+});
+
+socket.on('public_rooms_updated', (rooms) => {
+    const list = document.getElementById('public-rooms-list');
+    list.innerHTML = '';
+
+    if (rooms.length === 0) {
+        list.innerHTML = '<p class="empty-msg" style="opacity:0.5; padding:20px;">No hay salas públicas activas ahora.</p>';
+        return;
+    }
+
+    rooms.forEach(room => {
+        const div = document.createElement('div');
+        div.className = 'room-item';
+        div.style = 'display:flex; justify-content:space-between; align-items:center; padding:10px; border-bottom:1px solid rgba(255,255,255,0.1); background:rgba(255,255,255,0.05); margin-bottom:5px; border-radius:5px;';
+        div.innerHTML = `
+            <div style="text-align:left;">
+                <span style="display:block; font-size:0.8rem; color:var(--neon-blue); font-weight:bold;">${room.host.nickname}</span>
+                <span style="font-size:0.6rem; opacity:0.7;">Sala: ${room.code}</span>
+            </div>
+            <button onclick="Rooms.join('${room.code}')" style="padding:5px 15px; font-size:0.7rem; background:var(--neon-green); color:black; border:none; border-radius:3px; cursor:pointer; font-weight:bold;">ENTRAR</button>
+        `;
+        list.appendChild(div);
+    });
 });
 
 socket.on('error_message', (msg) => {
     alert(msg);
 });
 
-// Listener para cuando el servidor encuentra partida
 socket.on('match_found', (matchData) => {
-    // data.players; data.status; data.equationIdx 
-    
-    // Identificar rol
     const p1 = matchData.players[0];
     const p2 = matchData.players[1];
     const isP1 = p1.userId === myId;
-    
     const rivalName = isP1 ? p2.nickname : p1.nickname;
     
-    // Pasar a app.js la carga de la partida
     window.setupMatchFromSocket(matchData.equationIdx, rivalName);
 });
 
-// Listener cuando alguien gana la partida
 socket.on('match_finished', (resultData) => {
-    console.log("🏆 Partida finalizada. Ganador:", resultData.winnerNickname);
     if (window.showResults) {
         window.showResults({
             winner_id: resultData.winnerUserId,
@@ -79,33 +93,43 @@ socket.on('match_finished', (resultData) => {
 socket.on('opponent_disconnected', (data) => {
     if (window.showResults) {
         window.showResults({
-            winner_id: myId, // Tú ganas
+            winner_id: myId,
             winner_name: playerName,
             time: "Abandono",
             isAbandonment: true,
-            customMessage: data.message
+            customMessage: data.message || "Tu oponente se desconectó. Has ganado."
         });
+    } else {
+        alert("Tu oponente se desconectó.");
+        showScreen('landing');
     }
 });
 
-// Cuando el rival se desconecta
-socket.on('opponent_disconnected', () => {
-    alert("Tu oponente se desconectó. Has ganado por abandono.");
-    window.showResults({
-        winner_id: myId,
-        winner_name: playerName,
-        time: 0
-    });
+// --- ASIGNACIÓN DE BOTONES ---
+
+document.getElementById('btn-show-create-options').onclick = () => Rooms.showStep('create-options');
+document.getElementById('btn-show-join-private').onclick = () => Rooms.showStep('join-private');
+document.getElementById('btn-show-public-lobby').onclick = () => {
+    Rooms.showStep('public-lobby');
+    Rooms.refreshLobby();
+};
+
+document.getElementById('btn-create-public').onclick = () => Rooms.create(true);
+document.getElementById('btn-create-private').onclick = () => Rooms.create(false);
+document.getElementById('btn-join-room').onclick = () => Rooms.join(document.getElementById('join-code-input').value);
+document.getElementById('btn-refresh-lobby').onclick = () => Rooms.refreshLobby();
+
+document.querySelectorAll('.btn-back-mm').forEach(btn => {
+    btn.onclick = () => Rooms.showStep('main-menu');
 });
 
-
-document.getElementById('btn-create-room').onclick = () => Rooms.createRoom();
-document.getElementById('btn-join-room').onclick = () => Rooms.joinRoom();
-document.getElementById('btn-cancel-match').onclick = () => showScreen('landing');
+document.getElementById('btn-cancel-match').onclick = () => Rooms.openMenu();
+document.getElementById('btn-back-to-landing').onclick = () => showScreen('landing');
 
 document.getElementById('btn-play').onclick = () => {
     if (!myId) return alert("Debes iniciar sesión primero");
     Rooms.openMenu();
 };
 
-window.socket = socket; // Para usarlo desde app.js al enviar respuesta
+window.socket = socket;
+window.Rooms = Rooms;

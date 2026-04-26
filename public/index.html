@@ -125,35 +125,67 @@
 
         <!-- Matchmaking Screen -->
         <section id="matchmaking-screen" class="screen">
-            <div id="room-selector" class="glass-card" style="padding:40px; text-align:center; max-width:450px;">
-                <div class="radar" id="radar-anim" style="display:none; margin:0 auto 30px auto;">
-                    <div class="radar-line"></div>
-                </div>
+            <div id="room-selector" class="glass-card matchmaking-card">
                 <h2>CAMPO DE BATALLA</h2>
                 
-                <div id="room-controls" style="display:flex; flex-direction:column; gap:25px; margin-top:40px; width: 100%;">
-                    <button id="btn-create-room" class="btn-primary btn-giant">
-                        <span class="btn-text">CREAR MI PROPIA SALA</span>
+                <!-- Main Menu Matchmaking -->
+                <div id="mm-main-menu" class="mm-step">
+                    <button id="btn-show-create-options" class="btn-primary btn-giant">
+                        <span class="btn-text">CREAR MI PROPIA BATALLA</span>
                         <span class="btn-glow"></span>
                     </button>
                     
-                    <div style="margin: 10px 0; color: rgba(255,255,255,0.4); text-transform: uppercase; letter-spacing: 3px; font-size: 0.9rem;">
-                        — O ÚNETE A UNA EXISTENTE —
+                    <div style="margin: 20px 0; color: rgba(255,255,255,0.4); text-transform: uppercase; letter-spacing: 3px; font-size: 0.9rem;">
+                        — O ÚNETE A UNA BATALLA —
                     </div>
 
-                    <div class="join-container">
-                        <input type="text" id="join-code-input" placeholder="ESCRIBE EL CÓDIGO AQUÍ" maxlength="6">
-                        <button id="btn-join-room" class="btn-secondary btn-giant">ENTRAR A LA BATALLA</button>
+                    <div class="join-options" style="display:flex; flex-direction:column; gap:15px;">
+                        <button id="btn-show-join-private" class="btn-secondary">BATALLA PRIVADA (CÓDIGO)</button>
+                        <button id="btn-show-public-lobby" class="btn-secondary">BATALLA PÚBLICA (LISTADO)</button>
                     </div>
                 </div>
 
-                <div id="waiting-area" style="display:none; margin-top:30px;">
-                    <p>CÓDIGO DE TU SALA:</p>
+                <!-- Create Options -->
+                <div id="mm-create-options" class="mm-step" style="display:none;">
+                    <h3 style="margin-bottom:20px;">CONFIGURAR BATALLA</h3>
+                    <div class="option-grid" style="display:grid; grid-template-columns:1fr 1fr; gap:15px;">
+                        <button id="btn-create-public" class="btn-action">SALA PÚBLICA<br><small style="font-size:0.6rem; opacity:0.7;">Visible para todos</small></button>
+                        <button id="btn-create-private" class="btn-action">SALA PRIVADA<br><small style="font-size:0.6rem; opacity:0.7;">Solo con código</small></button>
+                    </div>
+                    <button class="btn-back-mm btn-secondary" style="margin-top:20px; width:100%;">VOLVER</button>
+                </div>
+
+                <!-- Join Private (Code) -->
+                <div id="mm-join-private" class="mm-step" style="display:none;">
+                    <h3>ENTRAR A BATALLA PRIVADA</h3>
+                    <input type="text" id="join-code-input" placeholder="INGRESA EL CÓDIGO" maxlength="6" style="margin-top:20px; width:100%; text-align:center; font-size:1.5rem;">
+                    <button id="btn-join-room" class="btn-primary" style="margin-top:20px; width:100%;">ENTRAR A LA BATALLA</button>
+                    <button class="btn-back-mm btn-secondary" style="margin-top:20px; width:100%;">VOLVER</button>
+                </div>
+
+                <!-- Public Lobby -->
+                <div id="mm-public-lobby" class="mm-step" style="display:none;">
+                    <h3>BATALLAS PÚBLICAS</h3>
+                    <div id="public-rooms-list" class="rooms-list" style="margin-top:20px; max-height:250px; overflow-y:auto; background:rgba(0,0,0,0.2); border-radius:10px; padding:10px;">
+                        <!-- Aquí se inyectan las salas -->
+                        <p class="empty-msg" style="opacity:0.5; padding:20px;">Buscando salas disponibles...</p>
+                    </div>
+                    <button id="btn-refresh-lobby" class="btn-action" style="margin-top:15px; width:100%; font-size:0.8rem;">ACTUALIZAR LISTA</button>
+                    <button class="btn-back-mm btn-secondary" style="margin-top:15px; width:100%;">VOLVER</button>
+                </div>
+
+                <!-- Waiting Area -->
+                <div id="waiting-area" class="mm-step" style="display:none;">
+                    <div class="radar" style="margin:20px auto;">
+                        <div class="radar-line"></div>
+                    </div>
+                    <p id="wait-room-type">SALA PRIVADA</p>
                     <h1 id="my-room-code" style="color:var(--neon-green); font-size:3rem; margin:10px 0;">---</h1>
                     <p id="matchmaking-status">Esperando oponente...</p>
+                    <button id="btn-cancel-match" class="btn-secondary" style="margin-top:20px; width:100%;">CANCELAR Y VOLVER</button>
                 </div>
 
-                <button id="btn-cancel-match" class="btn-secondary" style="margin-top:30px; width: 100%; height: 50px; font-size: 0.9rem;">VOLVER AL MENÚ PRINCIPAL</button>
+                <button id="btn-back-to-landing" class="btn-link" style="margin-top:40px; background:none; border:none; color:white; cursor:pointer; opacity:0.6;">VOLVER AL MENÚ PRINCIPAL</button>
             </div>
         </section>
 
