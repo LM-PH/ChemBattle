@@ -534,3 +534,78 @@ sub {
 .pos-1 { color: #ffd700; font-weight: bold; }
 .pos-2 { color: #c0c0c0; }
 .pos-3 { color: #cd7f32; }
+
+/* --- ROOMS UI IMPROVEMENTS --- */
+.btn-giant {
+    width: 100% !important;
+    height: 80px !important;
+    font-size: 1.4rem !important;
+    letter-spacing: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-transform: uppercase;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+}
+
+.btn-giant:hover {
+    transform: scale(1.05) translateY(-5px) !important;
+    box-shadow: 0 15px 30px rgba(0, 255, 136, 0.4) !important;
+}
+
+.btn-secondary {
+    background: transparent;
+    border: 2px solid var(--neon-blue);
+    color: var(--neon-blue);
+    padding: 15px;
+    font-weight: 700;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-secondary:hover {
+    background: rgba(61, 216, 255, 0.1);
+    box-shadow: 0 0 20px var(--neon-blue);
+    color: white;
+    transform: scale(1.02);
+}
+
+.join-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width: 100%;
+}
+
+.join-container input {
+    background: rgba(255,255,255,0.05);
+    border: 2px solid var(--glass-border);
+    padding: 20px;
+    font-size: 1.5rem;
+    color: white;
+    border-radius: 12px;
+    text-align: center;
+    transition: all 0.3s;
+}
+
+.join-container input:focus {
+    outline: none;
+    border-color: var(--neon-blue);
+    box-shadow: 0 0 15px rgba(61, 216, 255, 0.3);
+    background: rgba(255,255,255,0.1);
+}
+
+.btn-text-only {
+    background: none;
+    border: none;
+    color: rgba(255,255,255,0.4);
+    cursor: pointer;
+    font-size: 1rem;
+    text-decoration: underline;
+    transition: 0.3s;
+}
+
+.btn-text-only:hover {
+    color: white;
+}

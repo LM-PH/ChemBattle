@@ -131,15 +131,19 @@
                 </div>
                 <h2>CAMPO DE BATALLA</h2>
                 
-                <div id="room-controls" style="display:flex; flex-direction:column; gap:15px; margin-top:30px;">
-                    <button id="btn-quick-play" class="btn-primary" style="background:var(--neon-green); border-color:var(--neon-green);">PARTIDA RÁPIDA</button>
-                    <div style="display:flex; align-items:center; gap:10px; margin:5px 0;">
-                        <hr style="flex:1; opacity:0.2;"> <span style="font-size:0.8rem; opacity:0.5;">O USA UN CÓDIGO</span> <hr style="flex:1; opacity:0.2;">
+                <div id="room-controls" style="display:flex; flex-direction:column; gap:25px; margin-top:40px; width: 100%;">
+                    <button id="btn-create-room" class="btn-primary btn-giant">
+                        <span class="btn-text">CREAR MI PROPIA SALA</span>
+                        <span class="btn-glow"></span>
+                    </button>
+                    
+                    <div style="margin: 10px 0; color: rgba(255,255,255,0.4); text-transform: uppercase; letter-spacing: 3px; font-size: 0.9rem;">
+                        — O ÚNETE A UNA EXISTENTE —
                     </div>
-                    <button id="btn-create-room" class="btn-secondary">CREAR SALA PRIVADA</button>
-                    <div style="display:flex; gap:10px;">
-                        <input type="text" id="join-code-input" placeholder="CÓDIGO" style="flex:1; padding:12px; border-radius:8px; background:rgba(255,255,255,0.05); border:1px solid var(--neon-blue); color:white; text-align:center; text-transform:uppercase;">
-                        <button id="btn-join-room" class="btn-primary" style="padding:0 15px; font-size:0.8rem;">ENTRAR</button>
+
+                    <div class="join-container">
+                        <input type="text" id="join-code-input" placeholder="ESCRIBE EL CÓDIGO AQUÍ" maxlength="6">
+                        <button id="btn-join-room" class="btn-secondary btn-giant">ENTRAR A LA BATALLA</button>
                     </div>
                 </div>
 
@@ -149,7 +153,7 @@
                     <p id="matchmaking-status">Esperando oponente...</p>
                 </div>
 
-                <button id="btn-cancel-match" class="btn-secondary" style="margin-top:30px;">ATRÁS</button>
+                <button id="btn-cancel-match" class="btn-secondary" style="margin-top:30px; width: 100%; height: 50px; font-size: 0.9rem;">VOLVER AL MENÚ PRINCIPAL</button>
             </div>
         </section>
 
