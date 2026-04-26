@@ -90,12 +90,33 @@ app.post('/api/user/save', async (req, res) => {
     }
 });
 
+// --- LÓGICA DE NIVELES ---
+function getLevel(wins) {
+    if (wins >= 200) return { name: "Gran Alquimista", emoji: "🧙", color: "#ff00ff" };
+    if (wins >= 150) return { name: "Maestro de Síntesis", emoji: "🧫", color: "#ff8800" };
+    if (wins >= 100) return { name: "Analista Químico", emoji: "🔬", color: "#00d2ff" };
+    if (wins >= 50) return { name: "Técnico en Reacciones", emoji: "⚗️", color: "#00ff88" };
+    return { name: "Ayudante de Laboratorio", emoji: "🥼", color: "#ffffff" };
+}
+
 app.get('/api/ranking', async (req, res) => {
     try {
-        const { sort } = req.query; // 'wins' or 'coins'
+        const { sort } = req.query;
         const sortParam = sort === 'wins' ? { wins: -1 } : { coins: -1 };
         const users = await User.find().sort(sortParam).limit(50);
-        res.json({ success: true, users });
+        
+        // Añadir info de nivel a cada usuario
+        const usersWithLevels = users.map(u => {
+            const level = getLevel(u.wins);
+            return {
+                ...u._doc,
+                levelName: level.name,
+                levelEmoji: level.emoji,
+                levelColor: level.color
+            };
+        });
+
+        res.json({ success: true, users: usersWithLevels });
     } catch (e) {
         res.status(500).json({ success: false, error: e.message });
     }
@@ -160,9 +181,11 @@ io.on('connection', (socket) => {
         try {
             const hostData = await User.findById(playerData.userId);
             if (hostData) {
-                // Contar cuántos usuarios tienen más victorias que el host
                 const betterPlayers = await User.countDocuments({ wins: { $gt: hostData.wins } });
                 rank = betterPlayers + 1;
+                const level = getLevel(hostData.wins);
+                playerData.levelName = level.name;
+                playerData.levelEmoji = level.emoji;
             }
         } catch (err) {
             console.error("Error calculando rank para sala:", err);
@@ -175,7 +198,9 @@ io.on('connection', (socket) => {
                 socketId: socket.id, 
                 nickname: playerData.nickname, 
                 userId: playerData.userId,
-                rank: rank // Guardamos su posición en el ranking
+                rank: rank,
+                levelName: playerData.levelName,
+                levelEmoji: playerData.levelEmoji
             },
             status: 'waiting',
             isPublic: isPublic,

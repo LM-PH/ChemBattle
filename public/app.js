@@ -280,9 +280,19 @@ async function loadRanking() {
             data.users.forEach((doc, i) => {
                 const tr = document.createElement('tr');
                 const posClass = i < 3 ? `pos-${i+1}` : "";
+                
+                // Mostrar Medallas para el Top 3, si no, el número
+                let rankLabel = i + 1;
+                if(i === 0) rankLabel = "🥇";
+                else if(i === 1) rankLabel = "🥈";
+                else if(i === 2) rankLabel = "🥉";
+
                 tr.innerHTML = `
-                    <td class="${posClass}">${i + 1}</td>
-                    <td>${doc.nickname}</td>
+                    <td class="${posClass}">${rankLabel}</td>
+                    <td style="text-align:left;">
+                        <span style="display:block; font-weight:bold;">${doc.nickname}</span>
+                        <span style="font-size:0.65rem; color:${doc.levelColor || '#fff'}; opacity:0.8;">${doc.levelEmoji} ${doc.levelName}</span>
+                    </td>
                     <td>${sortBy === 'wins' ? doc.wins + ' 🏆' : doc.coins + ' 🪙'}</td>
                 `;
                 body.appendChild(tr);

@@ -74,9 +74,10 @@ socket.on('public_rooms_updated', (rooms) => {
         div.innerHTML = `
             <div style="text-align:left;">
                 <span style="display:block; font-size:1rem; color:var(--neon-green); font-weight:bold; text-transform:uppercase; letter-spacing:1px;">${room.name}</span>
-                <div style="display:flex; align-items:center; gap:10px; margin-top:4px;">
+                <div style="display:grid; grid-template-columns: auto auto; gap:5px 15px; margin-top:4px;">
                     <span style="font-size:0.75rem; color:white; opacity:0.9;">Host: ${room.host.nickname}</span>
-                    <span style="font-size:0.7rem; ${rankStyle} background:rgba(0,0,0,0.3); padding:2px 8px; border-radius:20px;">${rankDisplay}</span>
+                    <span style="font-size:0.7rem; ${rankStyle} background:rgba(0,0,0,0.3); padding:2px 8px; border-radius:20px; width:fit-content;">${rankDisplay}</span>
+                    <span style="font-size:0.65rem; color:rgba(255,255,255,0.7); grid-column: 1 / span 2;">Rango: ${room.host.levelEmoji} ${room.host.levelName}</span>
                 </div>
             </div>
             <button onclick="Rooms.join('${room.code}')" class="btn-primary" style="padding:8px 20px; font-size:0.8rem; border-radius:5px; transform:none;">UNIRSE</button>
