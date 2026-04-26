@@ -154,7 +154,9 @@ const screens = {
     landing: document.getElementById('landing-screen'),
     matchmaking: document.getElementById('matchmaking-screen'),
     game: document.getElementById('game-screen'),
-    result: document.getElementById('result-screen')
+    result: document.getElementById('result-screen'),
+    ranking: document.getElementById('ranking-screen'),
+    store: document.getElementById('store-screen')
 };
 
 const showScreen = (id) => {
@@ -253,7 +255,7 @@ document.getElementById('btn-back-rank').onclick = () => showScreen('landing');
 document.getElementById('btn-apply-rank').onclick = () => loadRanking();
 
 async function loadRanking() {
-    showScreen('ranking-screen');
+    showScreen('ranking');
     const sortBy = document.getElementById('rank-sort').value; // 'wins' or 'coins'
     
     try {
