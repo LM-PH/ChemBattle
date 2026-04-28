@@ -123,6 +123,17 @@ app.delete('/api/admin/users/bulk', async (req, res) => {
 
 app.get('/api/user/:userId', async (req, res) => {
     try {
+        if (req.params.userId === 'admin_id') {
+            return res.json({ 
+                success: true, 
+                user: { 
+                    _id: 'admin_id', 
+                    email: 'zlagustin10@gmail.com', 
+                    name: 'Administrador', 
+                    isAdmin: true 
+                } 
+            });
+        }
         const user = await User.findById(req.params.userId);
         if (user) {
             res.json({ success: true, user });

@@ -10,15 +10,14 @@ window.Auth = {
                 if (data.success) {
                     const freshUser = data.user;
                     localStorage.setItem('_cb_user', JSON.stringify(freshUser));
-                    if (window.setPlayerFromAuth) {
                         window.setPlayerFromAuth({
                             userId: freshUser._id,
                             nickname: freshUser.nickname,
+                            isAdmin: freshUser.isAdmin,
                             coins: freshUser.coins,
                             wins: freshUser.wins,
                             powers: freshUser.powers || { freeze: 0, confuse: 0 }
                         });
-                    }
                     return;
                 }
             } catch (e) {
@@ -26,15 +25,14 @@ window.Auth = {
             }
 
             // Fallback a local si el servidor falla
-            if (window.setPlayerFromAuth) {
                 window.setPlayerFromAuth({
                     userId: user._id,
                     nickname: user.nickname,
+                    isAdmin: user.isAdmin,
                     coins: user.coins,
                     wins: user.wins,
                     powers: user.powers || { freeze: 0, confuse: 0 }
                 });
-            }
         } else {
             console.log("No active session");
         }
