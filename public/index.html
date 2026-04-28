@@ -257,36 +257,39 @@
         </section>
 
         <!-- Admin Panel Screen -->
-        <section id="admin-screen" class="screen">
-            <div class="glass-card admin-card">
-                <h2>PANEL DE CONTROL (ADMIN)</h2>
-                
-                <div class="ranking-filters">
-                    <input type="text" id="admin-filter-school" placeholder="Filtrar por Escuela">
+        <section id="admin-screen" class="screen admin-focused">
+            <div class="admin-header">
+                <h1>GESTIÓN DE ALUMNOS</h1>
+                <button id="btn-back-admin" class="btn-logout-admin">CERRAR SESIÓN</button>
+            </div>
+            
+            <div class="admin-controls-bar">
+                <div class="filter-group">
+                    <input type="text" id="admin-filter-school" placeholder="Escuela">
                     <input type="text" id="admin-filter-grade" placeholder="Grado">
                     <input type="text" id="admin-filter-group" placeholder="Grupo">
-                    <button id="btn-admin-filter" class="btn-action">BUSCAR</button>
-                    <button id="btn-admin-delete-group" class="btn-delete" style="padding: 10px 20px; font-weight: bold;">BORRAR GRUPO</button>
+                    <button id="btn-admin-filter" class="btn-action-small">BUSCAR</button>
                 </div>
+                <button id="btn-admin-delete-group" class="btn-delete-bulk">BORRAR GRUPO FILTRADO</button>
+            </div>
 
-                <div class="admin-table-container">
-                    <table id="admin-table">
-                        <thead>
-                            <tr>
-                                <th>NOMBRE / NICK</th>
-                                <th>ESCUELA</th>
-                                <th>GRADO/GRUPO</th>
-                                <th>CORREO</th>
-                                <th>ACCIONES</th>
-                            </tr>
-                        </thead>
-                        <tbody id="admin-users-body">
-                            <!-- JS Injection -->
-                        </tbody>
-                    </table>
-                </div>
-
-                <button id="btn-back-admin" class="btn-secondary">SALIR DEL PANEL</button>
+            <div class="admin-table-wrapper">
+                <table id="admin-table">
+                    <thead>
+                        <tr>
+                            <th>ESCUELA</th>
+                            <th>GRADO</th>
+                            <th>GRUPO</th>
+                            <th>NOMBRE COMPLETO</th>
+                            <th>NICKNAME</th>
+                            <th>CORREO</th>
+                            <th>ACCIÓN</th>
+                        </tr>
+                    </thead>
+                    <tbody id="admin-users-body">
+                        <!-- JS Injection -->
+                    </tbody>
+                </table>
             </div>
         </section>
     </div>

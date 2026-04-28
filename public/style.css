@@ -693,56 +693,132 @@ sub {
     transition: 0.2s;
 }
 
-/* --- ADMIN PANEL STYLES --- */
-.admin-card {
-    width: 95%;
-    max-width: 900px;
-    padding: 30px;
+/* --- ADMIN PANEL STYLES (CLEAN & FOCUSED) --- */
+.admin-focused {
+    background: #0a0f14 !important; /* Fondo sólido para seriedad */
+    backdrop-filter: none !important;
+    display: none;
+    flex-direction: column;
+    padding: 0;
+    align-items: stretch;
+    justify-content: flex-start;
 }
 
-.admin-table-container {
-    max-height: 500px;
+.admin-header {
+    background: #111;
+    padding: 20px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid var(--neon-blue);
+}
+
+.admin-header h1 {
+    font-size: 1.5rem;
+    color: var(--neon-blue);
+    letter-spacing: 2px;
+}
+
+.btn-logout-admin {
+    background: var(--error-red);
+    color: white;
+    border: none;
+    padding: 8px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.admin-controls-bar {
+    background: #1a1a1a;
+    padding: 20px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.filter-group {
+    display: flex;
+    gap: 10px;
+}
+
+.filter-group input {
+    background: #222;
+    border: 1px solid #444;
+    color: white;
+    padding: 10px;
+    border-radius: 4px;
+    width: 150px;
+}
+
+.btn-action-small {
+    background: var(--neon-blue);
+    color: black;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.btn-delete-bulk {
+    background: transparent;
+    border: 2px solid var(--error-red);
+    color: var(--error-red);
+    padding: 10px 20px;
+    border-radius: 4px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.btn-delete-bulk:hover {
+    background: var(--error-red);
+    color: white;
+}
+
+.admin-table-wrapper {
+    flex-grow: 1;
     overflow-y: auto;
-    margin: 20px 0;
-    background: rgba(0,0,0,0.2);
-    border-radius: 10px;
-    border: 1px solid var(--glass-border);
+    padding: 20px 40px;
 }
 
 #admin-table {
     width: 100%;
     border-collapse: collapse;
+    background: #161616;
 }
 
 #admin-table th {
-    background: rgba(61, 216, 255, 0.1);
-    color: var(--neon-blue);
-    padding: 15px;
     text-align: left;
+    padding: 15px;
+    background: #222;
+    color: var(--neon-blue);
     position: sticky;
     top: 0;
-    z-index: 10;
+    font-size: 0.8rem;
+    text-transform: uppercase;
 }
 
 #admin-table td {
-    padding: 12px 15px;
-    border-bottom: 1px solid rgba(255,255,255,0.05);
+    padding: 15px;
+    border-bottom: 1px solid #333;
+    font-size: 0.9rem;
+}
+
+#admin-table tr:hover {
+    background: #1e1e1e;
 }
 
 .btn-delete {
-    background: var(--error-red);
+    background: #ff4444;
     color: white;
     border: none;
-    padding: 5px 10px;
+    padding: 5px 12px;
     border-radius: 4px;
     cursor: pointer;
-    font-size: 0.8rem;
-    transition: 0.3s;
-}
-
-.btn-delete:hover {
-    transform: scale(1.1);
-    box-shadow: 0 0 10px var(--error-red);
 }
 
 #btn-admin-access {

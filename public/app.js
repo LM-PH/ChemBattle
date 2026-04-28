@@ -565,11 +565,13 @@ async function loadAdminUsers() {
             filteredUsers.forEach(user => {
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
-                    <td>${user.name} <br> <small style="opacity:0.6">${user.nickname}</small></td>
                     <td>${user.school || '---'}</td>
-                    <td>${user.grade || ''} - ${user.group || ''}</td>
+                    <td style="text-align:center;">${user.grade || ''}</td>
+                    <td style="text-align:center;">${user.group || ''}</td>
+                    <td><b>${user.name}</b></td>
+                    <td>${user.nickname}</td>
                     <td>${user.email}</td>
-                    <td>
+                    <td style="text-align:center;">
                         <button class="btn-delete" onclick="deleteUser('${user._id}', '${user.name}')">Borrar</button>
                     </td>
                 `;

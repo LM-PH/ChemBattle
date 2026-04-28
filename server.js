@@ -85,8 +85,8 @@ app.post('/api/login', async (req, res) => {
 // --- ENDPOINTS ADMINISTRATIVOS ---
 app.get('/api/admin/users', async (req, res) => {
     try {
-        // En un entorno real, aquí verificarías un token de sesión admin
-        const users = await User.find().sort({ grade: 1, group: 1, name: 1 });
+        // Ordenar por Escuela, Grado y Grupo como prioridad
+        const users = await User.find().sort({ school: 1, grade: 1, group: 1, name: 1 });
         res.json({ success: true, users });
     } catch (e) {
         res.status(500).json({ success: false, error: e.message });
