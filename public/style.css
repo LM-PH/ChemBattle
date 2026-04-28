@@ -429,6 +429,22 @@ sub {
 }
 
 /* --- AUTH STYLES --- */
+.auth-card select {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--glass-border);
+    color: white;
+    appearance: none; /* Quita la flecha por defecto para estilizar */
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 15px;
+}
+
+.auth-card select option {
+    background: #1a1a1a;
+    color: white;
+}
+
 .auth-card {
     width: 100%;
     max-width: 450px;

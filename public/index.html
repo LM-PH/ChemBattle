@@ -33,8 +33,16 @@
                 <input type="text" id="reg-name" placeholder="Nombre completo">
                 <input type="text" id="reg-nickname" placeholder="Nickname (Ej: Curie99)">
                 <div class="row">
-                    <input type="text" id="reg-grade" placeholder="Grado">
-                    <input type="text" id="reg-group" placeholder="Grupo">
+                    <input type="number" id="reg-grade" placeholder="Grado" min="1" max="9">
+                    <select id="reg-group" style="background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); color: white; border-radius: 8px; padding: 12px; flex: 1;">
+                        <option value="" disabled selected style="color: #666;">Grupo</option>
+                        <option value="A">A</option>
+                        <option value="B">B</option>
+                        <option value="C">C</option>
+                        <option value="D">D</option>
+                        <option value="E">E</option>
+                        <option value="F">F</option>
+                    </select>
                 </div>
                 <input type="text" id="reg-school" placeholder="Nombre de la Escuela">
                 <input type="email" id="reg-email" placeholder="Correo electrónico">

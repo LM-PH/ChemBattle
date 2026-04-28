@@ -108,11 +108,23 @@ document.getElementById('go-to-login').onclick = () => {
 
 // Event Listeners
 document.getElementById('btn-register-submit').onclick = () => {
+    const grade = document.getElementById('reg-grade').value;
+    const group = document.getElementById('reg-group').value;
+
+    if (!grade || isNaN(grade)) {
+        alert("Por favor, ingresa un Grado válido (número).");
+        return;
+    }
+    if (!group) {
+        alert("Por favor, selecciona un Grupo (A-F).");
+        return;
+    }
+
     const data = {
         name: document.getElementById('reg-name').value,
         nickname: document.getElementById('reg-nickname').value,
-        grade: document.getElementById('reg-grade').value,
-        group: document.getElementById('reg-group').value,
+        grade: grade,
+        group: group,
         school: document.getElementById('reg-school').value,
         email: document.getElementById('reg-email').value,
         pass: document.getElementById('reg-pass').value
