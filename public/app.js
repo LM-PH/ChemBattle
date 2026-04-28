@@ -531,7 +531,11 @@ document.getElementById('btn-admin-access').onclick = (e) => {
 };
 
 document.getElementById('btn-back-admin').onclick = () => {
-    location.reload(); 
+    if (window.Auth) window.Auth.logout();
+    else {
+        localStorage.removeItem('_cb_user');
+        location.reload();
+    }
 };
 
 document.getElementById('btn-admin-filter').onclick = () => loadAdminUsers();
