@@ -56,6 +56,20 @@ app.post('/api/register', async (req, res) => {
 app.post('/api/login', async (req, res) => {
     try {
         const { email, password } = req.body;
+        
+        // --- ACCESO ADMINISTRADOR ---
+        if (email === 'zlagustin10@gmail.com' && password === 'AdminChem2026!') {
+            return res.json({ 
+                success: true, 
+                user: { 
+                    _id: 'admin_id', 
+                    email: 'zlagustin10@gmail.com', 
+                    name: 'Administrador', 
+                    isAdmin: true 
+                } 
+            });
+        }
+
         const user = await User.findOne({ email, password });
         if (user) {
             res.json({ success: true, user });
@@ -65,6 +79,26 @@ app.post('/api/login', async (req, res) => {
     } catch (error) {
         console.error(error);
         res.status(500).json({ success: false, error: 'Error del servidor' });
+    }
+});
+
+// --- ENDPOINTS ADMINISTRATIVOS ---
+app.get('/api/admin/users', async (req, res) => {
+    try {
+        // En un entorno real, aquí verificarías un token de sesión admin
+        const users = await User.find().sort({ grade: 1, group: 1, name: 1 });
+        res.json({ success: true, users });
+    } catch (e) {
+        res.status(500).json({ success: false, error: e.message });
+    }
+});
+
+app.delete('/api/admin/user/:userId', async (req, res) => {
+    try {
+        await User.findByIdAndDelete(req.params.userId);
+        res.json({ success: true, message: "Usuario eliminado" });
+    } catch (e) {
+        res.status(500).json({ success: false, error: e.message });
     }
 });
 

@@ -22,6 +22,8 @@
                 <input type="password" id="login-pass" placeholder="Contraseña">
                 <button id="btn-login" class="btn-primary">ENTRAR</button>
                 <p>¿No tienes cuenta? <a href="#" id="go-to-register">Regístrate</a></p>
+                <hr style="margin: 20px 0; opacity: 0.2;">
+                <p style="font-size: 0.8rem; opacity: 0.7;">Acceso Restringido: <a href="#" id="btn-admin-access" style="color: var(--neon-blue);">Administrador</a></p>
             </div>
 
             <div id="register-form" class="glass-card auth-card" style="display:none;">
@@ -249,6 +251,37 @@
                     </div>
                 </div>
                 <button id="btn-restart" class="btn-primary">NUEVA PARTIDA</button>
+            </div>
+        </section>
+
+        <!-- Admin Panel Screen -->
+        <section id="admin-screen" class="screen">
+            <div class="glass-card admin-card">
+                <h2>PANEL DE CONTROL (ADMIN)</h2>
+                
+                <div class="ranking-filters">
+                    <input type="text" id="admin-filter-grade" placeholder="Filtrar por Grado">
+                    <input type="text" id="admin-filter-group" placeholder="Filtrar por Grupo">
+                    <button id="btn-admin-filter" class="btn-action">FILTRAR</button>
+                </div>
+
+                <div class="admin-table-container">
+                    <table id="admin-table">
+                        <thead>
+                            <tr>
+                                <th>NOMBRE</th>
+                                <th>GRADO/GRUPO</th>
+                                <th>CORREO</th>
+                                <th>ACCIONES</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-users-body">
+                            <!-- JS Injection -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <button id="btn-back-admin" class="btn-secondary">SALIR DEL PANEL</button>
             </div>
         </section>
     </div>

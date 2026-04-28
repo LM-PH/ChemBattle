@@ -402,13 +402,15 @@ const screens = {
     game: document.getElementById('game-screen'),
     result: document.getElementById('result-screen'),
     ranking: document.getElementById('ranking-screen'),
-    store: document.getElementById('store-screen')
+    store: document.getElementById('store-screen'),
+    admin: document.getElementById('admin-screen')
 };
 
 const showScreen = (id) => {
     Object.values(screens).forEach(s => s.classList.remove('active'));
-    screens[id].classList.add('active');
+    if (screens[id]) screens[id].classList.add('active');
     if (id === 'landing' || id === 'store') updateUIStats();
+    if (id === 'admin') loadAdminUsers();
 };
 
 // --- USER DATA SYSTEM ---
@@ -427,6 +429,12 @@ window.setPlayerFromAuth = (player) => {
     
     // UI Transitions
     document.getElementById('auth-screen').classList.remove('active');
+    
+    if (player.isAdmin) {
+        showScreen('admin');
+        return;
+    }
+
     document.getElementById('landing-screen').classList.add('active');
     
     // Sync login name with game input
@@ -511,6 +519,75 @@ document.getElementById('btn-practice').onclick = () => startPractice();
 document.getElementById('btn-ranking').onclick = () => loadRanking();
 document.getElementById('btn-back-rank').onclick = () => showScreen('landing');
 document.getElementById('btn-apply-rank').onclick = () => loadRanking();
+
+// --- ADMIN PANEL LOGIC ---
+document.getElementById('btn-admin-access').onclick = (e) => {
+    e.preventDefault();
+    document.getElementById('login-email').value = 'zlagustin10@gmail.com';
+    document.getElementById('login-pass').focus();
+    alert("Ingresa la contraseña de administrador para continuar.");
+};
+
+document.getElementById('btn-back-admin').onclick = () => {
+    location.reload(); // Forma más limpia de salir del panel
+};
+
+document.getElementById('btn-admin-filter').onclick = () => loadAdminUsers();
+
+async function loadAdminUsers() {
+    const grade = document.getElementById('admin-filter-grade').value.toLowerCase();
+    const group = document.getElementById('admin-filter-group').value.toLowerCase();
+
+    try {
+        const res = await fetch('/api/admin/users');
+        const data = await res.json();
+        const body = document.getElementById('admin-users-body');
+        body.innerHTML = "";
+
+        if (data.success) {
+            let filteredUsers = data.users;
+            
+            if (grade) {
+                filteredUsers = filteredUsers.filter(u => u.grade && u.grade.toLowerCase().includes(grade));
+            }
+            if (group) {
+                filteredUsers = filteredUsers.filter(u => u.group && u.group.toLowerCase().includes(group));
+            }
+
+            filteredUsers.forEach(user => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${user.name} <br> <small style="opacity:0.6">${user.nickname}</small></td>
+                    <td>${user.grade || ''} - ${user.group || ''}</td>
+                    <td>${user.email}</td>
+                    <td>
+                        <button class="btn-delete" onclick="deleteUser('${user._id}', '${user.name}')">Borrar</button>
+                    </td>
+                `;
+                body.appendChild(tr);
+            });
+        }
+    } catch (e) {
+        console.error("Error cargando usuarios admin:", e);
+    }
+}
+
+window.deleteUser = async (userId, userName) => {
+    if (!confirm(`¿Estás seguro de que quieres eliminar a ${userName}?`)) return;
+
+    try {
+        const res = await fetch(`/api/admin/user/${userId}`, { method: 'DELETE' });
+        const data = await res.json();
+        if (data.success) {
+            alert("Usuario eliminado correctamente.");
+            loadAdminUsers();
+        } else {
+            alert("Error al eliminar usuario.");
+        }
+    } catch (e) {
+        console.error("Error al eliminar usuario:", e);
+    }
+};
 
 async function loadRanking() {
     showScreen('ranking');

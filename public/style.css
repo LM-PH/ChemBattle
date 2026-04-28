@@ -692,3 +692,61 @@ sub {
     transform: translateX(5px);
     transition: 0.2s;
 }
+
+/* --- ADMIN PANEL STYLES --- */
+.admin-card {
+    width: 95%;
+    max-width: 900px;
+    padding: 30px;
+}
+
+.admin-table-container {
+    max-height: 500px;
+    overflow-y: auto;
+    margin: 20px 0;
+    background: rgba(0,0,0,0.2);
+    border-radius: 10px;
+    border: 1px solid var(--glass-border);
+}
+
+#admin-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+#admin-table th {
+    background: rgba(61, 216, 255, 0.1);
+    color: var(--neon-blue);
+    padding: 15px;
+    text-align: left;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+#admin-table td {
+    padding: 12px 15px;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+
+.btn-delete {
+    background: var(--error-red);
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    transition: 0.3s;
+}
+
+.btn-delete:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 10px var(--error-red);
+}
+
+#btn-admin-access {
+    font-weight: bold;
+    text-decoration: underline;
+    cursor: pointer;
+}
