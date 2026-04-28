@@ -523,18 +523,23 @@ document.getElementById('btn-apply-rank').onclick = () => loadRanking();
 // --- ADMIN PANEL LOGIC ---
 document.getElementById('btn-admin-access').onclick = (e) => {
     e.preventDefault();
-    document.getElementById('login-email').value = 'zlagustin10@gmail.com';
-    document.getElementById('login-pass').focus();
-    alert("Ingresa la contraseña de administrador para continuar.");
+    document.getElementById('login-email').value = "";
+    document.getElementById('login-pass').value = "";
+    document.getElementById('login-form').querySelector('h2').innerText = "ACCESO ADMINISTRADOR";
+    document.getElementById('login-email').placeholder = "Correo de administrador";
+    document.getElementById('login-email').focus();
 };
 
 document.getElementById('btn-back-admin').onclick = () => {
-    location.reload(); // Forma más limpia de salir del panel
+    location.reload(); 
 };
 
 document.getElementById('btn-admin-filter').onclick = () => loadAdminUsers();
 
+document.getElementById('btn-admin-delete-group').onclick = () => deleteGroup();
+
 async function loadAdminUsers() {
+    const school = document.getElementById('admin-filter-school').value.toLowerCase();
     const grade = document.getElementById('admin-filter-grade').value.toLowerCase();
     const group = document.getElementById('admin-filter-group').value.toLowerCase();
 
@@ -547,6 +552,9 @@ async function loadAdminUsers() {
         if (data.success) {
             let filteredUsers = data.users;
             
+            if (school) {
+                filteredUsers = filteredUsers.filter(u => u.school && u.school.toLowerCase().includes(school));
+            }
             if (grade) {
                 filteredUsers = filteredUsers.filter(u => u.grade && u.grade.toLowerCase().includes(grade));
             }
@@ -558,6 +566,7 @@ async function loadAdminUsers() {
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
                     <td>${user.name} <br> <small style="opacity:0.6">${user.nickname}</small></td>
+                    <td>${user.school || '---'}</td>
                     <td>${user.grade || ''} - ${user.group || ''}</td>
                     <td>${user.email}</td>
                     <td>
@@ -579,15 +588,45 @@ window.deleteUser = async (userId, userName) => {
         const res = await fetch(`/api/admin/user/${userId}`, { method: 'DELETE' });
         const data = await res.json();
         if (data.success) {
-            alert("Usuario eliminado correctamente.");
             loadAdminUsers();
-        } else {
-            alert("Error al eliminar usuario.");
         }
     } catch (e) {
         console.error("Error al eliminar usuario:", e);
     }
 };
+
+async function deleteGroup() {
+    const school = document.getElementById('admin-filter-school').value;
+    const grade = document.getElementById('admin-filter-grade').value;
+    const group = document.getElementById('admin-filter-group').value;
+
+    if (!school && !grade && !group) {
+        alert("Para borrar por grupo, primero escribe una Escuela, Grado o Grupo en los filtros.");
+        return;
+    }
+
+    const confirmMsg = `¿Estás seguro de que quieres borrar a TODOS los alumnos de:\n` +
+        (school ? `Escuela: ${school}\n` : "") +
+        (grade ? `Grado: ${grade}\n` : "") +
+        (group ? `Grupo: ${group}\n` : "") +
+        `Esta acción no se puede deshacer.`;
+
+    if (!confirm(confirmMsg)) return;
+
+    try {
+        const query = new URLSearchParams({ school, grade, group }).toString();
+        const res = await fetch(`/api/admin/users/bulk?${query}`, { method: 'DELETE' });
+        const data = await res.json();
+        if (data.success) {
+            alert(data.message);
+            loadAdminUsers();
+        } else {
+            alert("Error: " + data.error);
+        }
+    } catch (e) {
+        console.error("Error en borrado masivo:", e);
+    }
+}
 
 async function loadRanking() {
     showScreen('ranking');

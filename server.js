@@ -102,6 +102,25 @@ app.delete('/api/admin/user/:userId', async (req, res) => {
     }
 });
 
+app.delete('/api/admin/users/bulk', async (req, res) => {
+    try {
+        const { school, grade, group } = req.query;
+        const filter = {};
+        if (school) filter.school = school;
+        if (grade) filter.grade = grade;
+        if (group) filter.group = group;
+
+        if (Object.keys(filter).length === 0) {
+            return res.status(400).json({ success: false, error: "Debe especificar al menos un filtro para borrado masivo." });
+        }
+
+        const result = await User.deleteMany(filter);
+        res.json({ success: true, message: `${result.deletedCount} usuarios eliminados.` });
+    } catch (e) {
+        res.status(500).json({ success: false, error: e.message });
+    }
+});
+
 app.get('/api/user/:userId', async (req, res) => {
     try {
         const user = await User.findById(req.params.userId);
