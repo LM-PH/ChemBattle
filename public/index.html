@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=3">
+    <link rel="stylesheet" href="style.css?v=4">
     <link rel="manifest" href="manifest.json">
     <link rel="shortcut icon" href="icon.png" type="image/png">
     <meta name="theme-color" content="#0a0f14">
@@ -241,6 +241,19 @@
                     <div id="coefficient-inputs" class="coefficient-inputs">
                         <!-- Inputs will be generated here -->
                     </div>
+                    
+                    <!-- NUEVA SECCIÓN DE PODERES -->
+                    <div class="powers-inventory-game">
+                        <button id="btn-use-freeze" class="btn-power">
+                            <span class="power-icon">❄️</span>
+                            <span id="game-freeze-count" class="power-count">0</span>
+                        </button>
+                        <button id="btn-use-confuse" class="btn-power">
+                            <span class="power-icon">🌀</span>
+                            <span id="game-confuse-count" class="power-count">0</span>
+                        </button>
+                    </div>
+
                     <button id="btn-submit" class="btn-action">ENVIAR FÓRMULA</button>
                 </div>
             </div>
@@ -305,7 +318,7 @@
     <!-- Lógica de Juego y Base de Datos (MERN + Socket.IO) -->
     <script src="/socket.io/socket.io.js"></script>
     <script src="client-auth.js"></script>
-    <script src="client-rooms.js"></script>
-    <script src="app.js"></script>
+    <script src="client-rooms.js?v=4"></script>
+    <script src="app.js?v=4"></script>
 </body>
 </html>

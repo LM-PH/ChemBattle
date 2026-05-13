@@ -283,6 +283,81 @@ input[type="text"]:focus {
 
 .btn-action:active { transform: translateY(0); }
 
+/* --- POWERS IN GAME --- */
+.powers-inventory-game {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-bottom: 10px;
+}
+
+.btn-power {
+    background: rgba(255, 255, 255, 0.05);
+    border: 2px solid var(--glass-border);
+    border-radius: 15px;
+    padding: 10px 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    transition: 0.3s;
+    position: relative;
+}
+
+.btn-power:hover:not(:disabled) {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: var(--neon-blue);
+    transform: scale(1.05);
+}
+
+.btn-power:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+.power-icon {
+    font-size: 1.5rem;
+}
+
+.power-count {
+    background: var(--neon-pink);
+    color: white;
+    font-weight: bold;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.8rem;
+}
+
+/* Efecto visual de Congelado */
+.frozen-overlay {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(61, 216, 255, 0.2);
+    backdrop-filter: blur(8px);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3rem;
+    color: white;
+    text-shadow: 0 0 20px var(--neon-blue);
+    animation: fadeIn 0.5s;
+    pointer-events: all; /* Bloquea clics */
+}
+
+/* Efecto visual de Confusión */
+.confused-effect {
+    animation: distort 0.2s infinite;
+}
+
+@keyframes distort {
+    0% { transform: translate(0) skew(0); filter: hue-rotate(0deg); }
+    25% { transform: translate(-5px, 5px) skew(2deg); filter: hue-rotate(90deg); }
+    50% { transform: translate(5px, -5px) skew(-2deg); filter: hue-rotate(180deg); }
+    75% { transform: translate(-5px, -5px) skew(1deg); filter: hue-rotate(270deg); }
+    100% { transform: translate(0) skew(0); filter: hue-rotate(360deg); }
+}
+
 /* --- ANIMATIONS --- */
 @keyframes shake {
     0%, 100% { transform: translateX(0); }

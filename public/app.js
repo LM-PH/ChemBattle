@@ -409,7 +409,7 @@ const screens = {
 const showScreen = (id) => {
     Object.values(screens).forEach(s => s.classList.remove('active'));
     if (screens[id]) screens[id].classList.add('active');
-    if (id === 'landing' || id === 'store') updateUIStats();
+    if (id === 'landing' || id === 'store' || id === 'game') updateUIStats();
     if (id === 'admin') loadAdminUsers();
 };
 
@@ -426,6 +426,7 @@ window.setPlayerFromAuth = (player) => {
     userData.coins = player.coins || 0;
     userData.wins = player.wins || 0;
     userData.powers = player.powers || { freeze: 0, confuse: 0 };
+    console.log("⚡ Poderes cargados del servidor:", userData.powers);
     
     // UI Transitions
     document.getElementById('auth-screen').classList.remove('active');
@@ -470,6 +471,18 @@ function updateUIStats() {
     const cCount = document.getElementById('inventory-confuse');
     if (fCount) fCount.innerText = `Tienes: ${userData.powers.freeze}`;
     if (cCount) cCount.innerText = `Tienes: ${userData.powers.confuse}`;
+
+    // Actualizar conteo en pantalla de juego
+    const gfCount = document.getElementById('game-freeze-count');
+    const gcCount = document.getElementById('game-confuse-count');
+    if (gfCount) gfCount.innerText = userData.powers.freeze;
+    if (gcCount) gcCount.innerText = userData.powers.confuse;
+
+    // Deshabilitar si no tiene
+    const btnF = document.getElementById('btn-use-freeze');
+    const btnC = document.getElementById('btn-use-confuse');
+    if (btnF) btnF.disabled = userData.powers.freeze <= 0;
+    if (btnC) btnC.disabled = userData.powers.confuse <= 0;
 }
 
 async function saveUser() {
@@ -515,10 +528,64 @@ document.getElementById('btn-show-store').onclick = () => showScreen('store');
 document.getElementById('btn-back-store').onclick = () => showScreen('landing');
 document.getElementById('buy-freeze').onclick = () => buyPower('freeze');
 document.getElementById('buy-confuse').onclick = () => buyPower('confuse');
+document.getElementById('btn-apply-rank').onclick = () => loadRanking();
 document.getElementById('btn-practice').onclick = () => startPractice();
 document.getElementById('btn-ranking').onclick = () => loadRanking();
 document.getElementById('btn-back-rank').onclick = () => showScreen('landing');
-document.getElementById('btn-apply-rank').onclick = () => loadRanking();
+
+// --- PODERES ---
+async function usePower(type) {
+    if (userData.powers[type] > 0) {
+        userData.powers[type]--;
+        updateUIStats();
+        saveUser();
+
+        if (window.socket) {
+            window.socket.emit('use_power', { type: type, userId: myId });
+        }
+    }
+}
+
+document.getElementById('btn-use-freeze').onclick = () => usePower('freeze');
+document.getElementById('btn-use-confuse').onclick = () => usePower('confuse');
+
+// Listeners para efectos recibidos
+if (window.socket) {
+    window.socket.on('apply_power', (data) => {
+        console.log("💥 Poder recibido:", data.type);
+        if (data.type === 'freeze') {
+            applyFreezeEffect();
+        } else if (data.type === 'confuse') {
+            applyConfuseEffect();
+        }
+    });
+}
+
+function applyFreezeEffect() {
+    const arena = document.querySelector('.arena');
+    const overlay = document.createElement('div');
+    overlay.className = 'frozen-overlay';
+    overlay.innerHTML = '❄️ ¡CONGELADO! ❄️';
+    arena.appendChild(overlay);
+
+    // Deshabilitar inputs
+    const inputs = document.querySelectorAll('.coeff-input');
+    inputs.forEach(i => i.disabled = true);
+
+    setTimeout(() => {
+        overlay.remove();
+        inputs.forEach(i => i.disabled = false);
+    }, 5000);
+}
+
+function applyConfuseEffect() {
+    const arena = document.querySelector('.arena');
+    arena.classList.add('confused-effect');
+
+    setTimeout(() => {
+        arena.classList.remove('confused-effect');
+    }, 8000);
+}
 
 // --- ADMIN PANEL LOGIC ---
 document.getElementById('btn-admin-access').onclick = (e) => {
@@ -816,6 +883,7 @@ function showResults(data) {
     document.getElementById('result-my-time').innerText = "Tiempo: " + data.time + "s";
     
     // --- SISTEMA DE RECOMPENSAS ---
+    const statsContainer = document.querySelector('.result-stats');
     const rewardEl = document.createElement('div');
     rewardEl.id = "result-reward";
     rewardEl.style.marginTop = "15px";
@@ -855,7 +923,6 @@ function showResults(data) {
     }
     
     // Insertar recompensa en la pantalla si no existe
-    const statsContainer = document.querySelector('.result-stats');
     const oldReward = document.getElementById('result-reward');
     if (oldReward) oldReward.remove();
     statsContainer.after(rewardEl);

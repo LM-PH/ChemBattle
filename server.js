@@ -346,6 +346,16 @@ io.on('connection', (socket) => {
             delete activeMatches[room];
         }
     });
+    
+    // Usar un poder durante la partida
+    socket.on('use_power', (data) => {
+        const room = socket.currentRoom;
+        if (room && (activeMatches[room] || room.startsWith('match_'))) {
+            // Reenviar el poder a todos en la sala EXCEPTO al que lo usó
+            socket.to(room).emit('apply_power', { type: data.type, fromUserId: data.userId });
+            console.log(`[Power] ${data.type} usado en sala ${room}`);
+        }
+    });
 
     // Salir de una sala (Cancelar espera)
     socket.on('leave_room', () => {
